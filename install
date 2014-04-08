@@ -1,0 +1,46 @@
+#!/bin/sh
+
+# 2014 Jon Suderman
+# https://github.com/suderman/linux/
+
+# Open a terminal and run this command:
+# curl https://raw.github.com/suderman/linux/master/install | sh
+
+# linux directory
+LINUX=$HOME/.linux
+
+# Check if the directory exists
+if [ -d $LINUX ]; then
+
+  # Now check if it's a git repo
+  if [ -d $LINUX/.git ]; then
+
+    # It is? Great, let update it!
+    echo "Updating linux..."
+    cd $LINUX && git pull
+
+  # It's not? Rename it so we can install this one
+  else
+    echo "Backing up existing $LINUX to make room for the new one!"
+    mv -f $LINUX $LINUX.backup
+  fi
+fi
+
+# Make sure the directory doesn't exist
+if [ ! -d $LINUX ]; then
+
+  # Ensure git exists
+  curl -sS https://raw.github.com/suderman/install/master/git | sh
+
+  # Install linux
+  echo "Installing linux"
+  git clone https://github.com/suderman/linux.git $LINUX
+
+  # Update remote url for easy updating
+  cd $LINUX && git remote set-url origin git@github.com:suderman/linux.git
+
+fi
+
+# Run osx command
+$LINUX/bin/linux
+
